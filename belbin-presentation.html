@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Теорія командних ролей Реймонда Белбіна</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#101530;--fg:#eef0fb;--mut:#a3a9cf;--card:#1a2048;--line:#2c3566;--act:#f5b83d;--ppl:#2ec4b6;--tht:#9a8cff;--ok:#7ddc8a}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f3f5fb;--fg:#161a3a;--mut:#55598a;--card:#fff;--line:#d6daee;--act:#c98a00;--ppl:#0f8f84;--tht:#5b4ee0;--ok:#1f9d3a}}
+:root[data-theme="light"]{--bg:#f3f5fb;--fg:#161a3a;--mut:#55598a;--card:#fff;--line:#d6daee;--act:#c98a00;--ppl:#0f8f84;--tht:#5b4ee0;--ok:#1f9d3a}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:Onest,system-ui,"Segoe UI",Arial,sans-serif;overflow:hidden;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.deck{height:100%;position:relative}
+.slide{position:absolute;inset:0;padding:5vh 7vw 11vh;display:none;flex-direction:column;justify-content:center;overflow-y:auto}
+.slide.on{display:flex;animation:in .45s ease}
+@keyframes in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(2rem,6vw,4.6rem);line-height:1.05;margin:0 0 .4em;font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.5rem,3.6vw,2.6rem);margin:0 0 .6em;font-weight:800;letter-spacing:-.01em}
+p,li{font-size:clamp(1rem,1.7vw,1.3rem);line-height:1.55;max-width:62ch}
+.mut{color:var(--mut)}
+.grid{display:grid;gap:16px}.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h3{margin:.2em 0 .4em;font-size:1.25rem}.card p{font-size:1rem;margin:0}
+.act{--c:var(--act)}.ppl{--c:var(--ppl)}.tht{--c:var(--tht)}
+.bar{border-top:5px solid var(--c)}
+.tag{display:inline-block;color:var(--c);font-weight:600}
+.btn{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;cursor:pointer}
+.btn:hover,.btn.sel{border-color:var(--c,var(--fg));background:color-mix(in srgb,var(--c,var(--fg)) 18%,var(--card))}
+.btn:focus-visible,.nav button:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
+.tl{border-left:3px solid var(--line);padding-left:20px;margin:0;list-style:none}
+.tl li{margin-bottom:14px;position:relative}.tl li::before{content:"";position:absolute;left:-29px;top:.55em;width:12px;height:12px;border-radius:50%;background:var(--tht)}
+.tl b{color:var(--tht)}
+.rolegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.role{text-align:left;font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:12px;padding:12px;cursor:pointer;transition:transform .15s}
+.role:hover{transform:translateY(-3px)}.role.sel{background:color-mix(in srgb,var(--c) 20%,var(--card));border-color:var(--c)}
+.role b{display:block;font-size:1rem}.role small{color:var(--mut)}
+.detail{margin-top:14px;min-height:150px}
+.detail h3{margin:0 0 6px;color:var(--c);font-size:1.4rem}.detail p{margin:4px 0;font-size:1rem;max-width:none}
+.meter{display:flex;gap:8px;margin:16px 0}.meter div{flex:1;height:14px;border-radius:7px;background:var(--line);transition:.3s}
+.meter div.f{background:var(--c)}
+.msg{font-size:1.15rem;min-height:3.2em}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;max-width:640px;border-radius:12px}
+.nav{position:fixed;left:0;right:0;bottom:0;padding:10px 7vw calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:12px;background:linear-gradient(transparent,var(--bg) 40%)}
+.nav button{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:50%;width:44px;height:44px;cursor:pointer;font-size:1.1rem}
+.prog{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--act),var(--ppl),var(--tht));transition:width .35s}
+.cnt{color:var(--mut);min-width:4.5em;text-align:right}
+.tnav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.tnav .btn{--c:var(--tht)}
+.dots{display:flex;flex-wrap:wrap;gap:6px;max-width:400px;margin:6px 0 10px}.dots i{width:28px;height:28px;border-radius:6px;background:var(--line);transition:background .3s}.dots i.w{background:var(--ok)}
+.logo{display:flex;gap:6px;margin-bottom:22px}.logo i{width:38px;height:12px;border-radius:6px}
+@media (max-width:700px){.rolegrid{grid-template-columns:repeat(2,1fr)}.slide{padding:4vh 6vw 12vh}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- візуальне оновлення ---- */
+body{background:radial-gradient(60vmax 60vmax at 92% -10%,color-mix(in srgb,var(--tht) 24%,transparent),transparent 62%),radial-gradient(55vmax 55vmax at -10% 112%,color-mix(in srgb,var(--ppl) 20%,transparent),transparent 62%),radial-gradient(42vmax 42vmax at 105% 105%,color-mix(in srgb,var(--act) 16%,transparent),transparent 62%),var(--bg);background-attachment:fixed}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.deck{z-index:1}.nav{z-index:2;background:linear-gradient(transparent,color-mix(in srgb,var(--bg) 75%,transparent))}
+.card,.role{background:color-mix(in srgb,var(--card) 70%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.card.bar{box-shadow:0 12px 40px -22px var(--c),inset 0 1px 0 color-mix(in srgb,var(--c) 30%,transparent)}
+.role.sel,.btn.sel{box-shadow:0 0 22px -6px var(--c,var(--fg))}
+h2::after{content:"";display:block;width:90px;height:5px;margin-top:12px;border-radius:3px;background:linear-gradient(90deg,var(--act) 33%,var(--ppl) 33% 66%,var(--tht) 66%)}
+.hero h1{background:linear-gradient(100deg,var(--act),var(--ppl) 50%,var(--tht));-webkit-background-clip:text;background-clip:text;color:transparent;font-size:clamp(2.2rem,6.4vw,5rem)}
+.hero h1,.hero p{max-width:min(58vw,660px)}
+.venn{position:absolute;right:7vw;top:0;bottom:8vh;margin:auto 0;width:min(34vw,360px);height:min(34vw,360px)}
+.venn i{position:absolute;width:62%;height:62%;border-radius:50%;background:color-mix(in srgb,var(--c) 34%,transparent);border:2px solid var(--c);display:flex;padding:12%;font-style:normal;animation:pop .9s cubic-bezier(.2,.8,.2,1) both}
+.venn i b{font-size:clamp(.8rem,1.3vw,1rem)}
+.venn .act{top:0;left:19%;align-items:flex-start;justify-content:center}
+.venn .ppl{bottom:0;left:0;align-items:flex-end;padding-left:8%}
+.venn .tht{bottom:0;right:0;align-items:flex-end;justify-content:flex-end;padding-right:8%}
+.venn .ppl{animation-delay:.15s}.venn .tht{animation-delay:.3s}
+.venn span{position:absolute;left:50%;top:57%;transform:translate(-50%,-50%);font-weight:800;font-size:clamp(.8rem,1.4vw,1.1rem)}
+@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+@media (max-width:900px){.venn{display:none}.hero h1,.hero p{max-width:100%}}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="deck" id="deck">
+
+<section class="slide hero">
+  <div class="venn"><i class="act"><b>Дієві</b></i><i class="ppl"><b>Соціальні</b></i><i class="tht"><b>Розумові</b></i><span>команда</span></div>
+  <div class="logo"><i style="background:var(--act)"></i><i style="background:var(--ppl)"></i><i style="background:var(--tht)"></i></div>
+  <h1>Теорія командних ролей<br>Реймонда Белбіна</h1>
+  <p class="mut">Чому команди з найрозумніших людей програють, а успішні складаються з різних характерів. Ця презентація інтерактивна: клікайте, обирайте, проходьте тест.</p>
+  <p><button class="btn" onclick="go(1)">Почати</button> <span class="mut">або натисніть → на клавіатурі</span></p>
+</section>
+
+<section class="slide">
+  <h2>Хто такий Реймонд Мередіт Белбін</h2>
+  <p>Британський дослідник менеджменту. Разом із колегами вивчав, чому одні команди ефективні, а інші ні. Він виявив, що успіх залежить від поєднання поведінкових стилів, а не лише від інтелекту чи досвіду.</p>
+  <p class="mut" style="margin-bottom:0">Пройдіть шлях дослідження по кроках:</p>
+  <div class="tnav" id="tnav"></div>
+  <div class="card detail" id="tdet"></div>
+</section>
+
+<section class="slide">
+  <h2>Експеримент «Аполлон»</h2>
+  <p>Назва походить від команд NASA. Белбін склав «компанії» з учасників із найвищими показниками логічного мислення за тестом Watson-Glaser і очікував, що вони переможуть.</p>
+  <div class="tnav"><button class="btn sel" id="b1" onclick="ap(0)">Очікування</button><button class="btn" id="b2" onclick="ap(1)">Реальність</button></div>
+  <div class="dots" id="dots"></div>
+  <p id="apcap" style="margin:0 0 14px"></p>
+  <div class="grid g3">
+    <div class="card act bar"><h3>Чому програвали</h3><p>Багато часу йшло на безплідні дебати: кожен намагався переконати інших у своїй правоті. Усі були схожі, і команді бракувало інших ролей.</p></div>
+    <div class="card tht bar"><h3>Звідки назва Plant</h3><p>Колеги з Henley наполягли, щоб у кожну групу «підсадили» одного креативного розумника. Англійське plant і означає «підсаджений».</p></div>
+    <div class="card ppl bar"><h3>Що це змінило</h3><p>Перемагали команди зі збалансованим набором ролей. З цього спостереження виросла модель командних ролей.</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Ключова ідея</h2>
+  <p>Командна роль — це схильність поводитися, вносити внесок і взаємодіяти з іншими певним чином. Це <b>не посада</b> і не те саме, що риси характеру.</p>
+  <p>Кожна роль має <b>сильні сторони</b> і <b>допустимі слабкості</b>: це «ціна» цих сильних сторін. Людина зазвичай має 2–3 основні ролі та кілька, які їй не даються.</p>
+  <p>Ролі згруповані у три категорії:</p>
+  <div class="grid g3">
+    <div class="card act bar"><h3 class="tag">Дієві</h3><p>Рухають роботу до результату: Формувальник, Реалізатор, Контролер.</p></div>
+    <div class="card ppl bar"><h3 class="tag">Соціальні</h3><p>Працюють з людьми: Координатор, Командний гравець, Дослідник ресурсів.</p></div>
+    <div class="card tht bar"><h3 class="tag">Розумові</h3><p>Працюють з інформацією: Генератор ідей, Аналітик, Спеціаліст.</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Дев'ять ролей: оберіть картку</h2>
+  <div class="rolegrid" id="roles"></div>
+  <div class="card detail" id="detail"><p class="mut">Натисніть на роль, щоб побачити сильні сторони й допустимі слабкості.</p></div>
+</section>
+
+<section class="slide">
+  <h2>Зберіть команду</h2>
+  <p class="mut">Додавайте ролі в команду й дивіться, чого їй не вистачає.</p>
+  <div id="chips" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+  <div class="meter" id="meter"><div class="act"></div><div class="ppl"></div><div class="tht"></div></div>
+  <div class="msg" id="msg"></div>
+</section>
+
+<section class="slide">
+  <h2>Міні-тест: яка ваша роль?</h2>
+  <div id="quiz"></div>
+</section>
+
+<section class="slide">
+  <h2>Що забрати з собою</h2>
+  <div class="grid g3">
+    <div class="card act bar"><h3>Різноманіття</h3><p>Сильна команда складається з людей з різними ролями, а не з копій одного типу.</p></div>
+    <div class="card ppl bar"><h3>Самопізнання</h3><p>Знайте свої основні ролі та слабкості: так простіше домовлятися з іншими.</p></div>
+    <div class="card tht bar"><h3>Гнучкість</h3><p>Якщо ролі бракує, її може тимчасово взяти хтось із команди, і це теж нормально.</p></div>
+  </div>
+  <p class="mut" style="margin-top:20px">Критики зауважують, що модель базується на самооцінці й не завжди стабільно підтверджується емпірично, тому її варто використовувати як інструмент для розмови, а не як вирок.</p>
+  <p><button class="btn" onclick="go(0)">Спочатку</button></p>
+</section>
+
+</div>
+
+<div class="nav">
+  <button onclick="go(i-1)" aria-label="Назад">←</button>
+  <button onclick="go(i+1)" aria-label="Далі">→</button>
+  <div class="prog"><i id="pg"></i></div>
+  <span class="cnt" id="cnt"></span>
+  <button onclick="tt()" aria-label="Змінити тему">◐</button>
+</div>
+
+<script>
+const G={act:"Дієва",ppl:"Соціальна",tht:"Розумова"};
+const R=[
+{k:"sh",g:"act",n:"Формувальник",e:"Shaper",s:"Енергійний, наполегливий, не боїться тиску, задає темп.",w:"Може бути різким, нетерплячим і зачепити почуття інших."},
+{k:"im",g:"act",n:"Реалізатор",e:"Implementer",s:"Дисциплінований, надійний, перетворює ідеї на практичні плани.",w:"Негнучкий, повільно приймає нові підходи."},
+{k:"cf",g:"act",n:"Контролер",e:"Completer Finisher",s:"Педантичний, помічає помилки, доводить роботу до кінця.",w:"Схильний хвилюватися і надмірно перевіряти, важко делегує."},
+{k:"co",g:"ppl",n:"Координатор",e:"Coordinator",s:"Впевнений, чітко ставить цілі, вміє залучати й делегувати.",w:"Може здаватися маніпулятивним і перекладати на інших свою роботу."},
+{k:"tw",g:"ppl",n:"Командний гравець",e:"Teamworker",s:"Дипломатичний, чуйний, згладжує конфлікти, підтримує атмосферу.",w:"Нерішучий у кризових ситуаціях, уникає суперечок."},
+{k:"ri",g:"ppl",n:"Дослідник ресурсів",e:"Resource Investigator",s:"Комунікабельний, цікавий, знаходить контакти й нові можливості.",w:"Швидко втрачає інтерес, може не довести справу до кінця."},
+{k:"pl",g:"tht",n:"Генератор ідей",e:"Plant",s:"Креативний, нестандартно розв'язує складні проблеми.",w:"Занурений у себе, неуважний до деталей та до того, як спілкується."},
+{k:"me",g:"tht",n:"Аналітик",e:"Monitor Evaluator",s:"Стратегічний, тверезий, зважує всі варіанти й судить точно.",w:"Бракує драйву й здатності надихати інших, може здаватися холодним."},
+{k:"sp",g:"tht",n:"Спеціаліст",e:"Specialist",s:"Самомотивований, має глибокі знання у вузькій галузі.",w:"Говорить про своє, пропускає ширший контекст."}
+];
+let i=0;const S=[...document.querySelectorAll('.slide')];
+function go(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach((s,j)=>s.classList.toggle('on',j===i));pg.style.width=((i+1)/S.length*100)+'%';cnt.textContent=(i+1)+' / '+S.length;window.bgKick&&bgKick()}
+function tt(){const r=document.documentElement,d=getComputedStyle(r).getPropertyValue('--bg').trim()==='#101530';r.dataset.theme=d?'light':'dark'}
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)&&e.target.tagName!=='BUTTON'){e.preventDefault();go(i+1)}if(['ArrowLeft','PageUp'].includes(e.key))go(i-1)});
+let x0=null;addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(x0===null||e.target.closest('button'))return;const d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>70)go(i+(d<0?1:-1));x0=null});
+
+// хронологія
+const T=[
+["Старт","Старт у Henley","Кінець 1960-х – 1970-ті, Henley Management College (Велика Британія)",[
+"Белбін із групою дослідників почав вивчати, чому менеджерські команди так сильно відрізняються за результатами: одні працюють злагоджено й перемагають, інші ні. Початкова гіпотеза була проста: команда з найрозумніших людей має виграти.",
+"Мета: з'ясувати, від чого залежить успіх команди, і навчитися передбачати його заздалегідь. Дослідження тривало близько дев'яти років. Для нього використали навчальну гру й тести, про що йдеться в наступних двох кроках."]],
+["Гра","Метод 1: ділова гра","Той самий період, під час дев'ятирічного дослідження",[
+"Менеджери середньої ланки, які навчалися на курсі General Management у Henley, ділилися на команди. Кожна команда тиждень керувала віртуальною компанією, що імітувала реальну роботу.",
+"Перемагала команда з найкращим фінансовим результатом, який підраховували в п'ятницю. Так результат кожної команди можна було виміряти і порівняти з іншими. Під час гри спостерігачі записували поведінку учасників."]],
+["Прогноз","Метод 2: тести й прогноз","Кожен тиждень гри: понеділок і п'ятниця",[
+"Перед грою кожен учасник проходив тести: Watson-Glaser (рівень логічного й критичного мислення), Cattell 16PF (16 рис особистості) та опитувальник PPQ про уподобання в роботі, який створив сам Белбін.",
+"У понеділок вранці за результатами тестів дослідники передбачали, яке місце посяде кожна команда, і клали прогноз у запечатаний конверт, щоб згодом його не підганяти. У п'ятницю конверт відкривали й порівнювали прогноз із реальним фінансовим результатом."]],
+["1976","Перші результати","1976, перша наукова публікація з результатами",[
+"Белбін із колегами порівняв прогнози з реальними місцями команд на трьох курсах: у них було 8, 6 і 8 команд. «Команда» тут означає групу менеджерів, яка тиждень керувала однією віртуальною компанією.",
+"Прогнози, засновані на тестах, нерідко не справдилися: частина команд, від яких очікували успіху через високий інтелект учасників, не реалізувала свій потенціал. Це ті самі команди «Аполлон», про які йдеться на наступному слайді. Отже, інтелект сам по собі успіх не пояснював, і Белбін почав шукати іншу причину."]],
+["1981","Книга й анкета","1981",[
+"Белбін підсумував дослідження в книзі «Management Teams: Why They Succeed or Fail». За спостереженнями за успішними командами він описав вісім командних ролей. Дві з них згодом перейменували: Chairman став Координатором, Company Worker став Реалізатором.",
+"У книзі з'явилася анкета Belbin Team Inventory. Людина відповідає, як вона зазвичай поводиться в командній роботі (розподіляє бали між твердженнями), і за відповідями видно, до яких ролей вона схильна. Версії цієї анкети й досі використовують у компаніях."]],
+["1988","Дев'ята роль","1988",[
+"До восьми ролей додали дев'яту: Спеціаліст, тобто людину з глибокими знаннями у вузькій галузі, яких бракує решті команди.",
+"Белбін помітив цю роль лише після завершення експериментів у Henley. Імовірно, у ділових іграх не були потрібні вузькі експертні знання, тому така поведінка в командах не проявлялася."]]
+];
+tnav.innerHTML=T.map((t,n)=>`<button class="btn" data-n="${n}">${t[0]}</button>`).join('');
+function showT(n){[...tnav.children].forEach((x,j)=>x.classList.toggle('sel',j===n));tdet.className='card detail tht';tdet.innerHTML=`<h3>${T[n][1]}</h3><p class="mut">${T[n][2]}</p>`+T[n][3].map(x=>`<p>${x}</p>`).join('')}
+tnav.onclick=e=>{const b=e.target.closest('.btn');if(b)showT(+b.dataset.n)};showT(0);
+
+// Аполлон
+dots.innerHTML='<i></i>'.repeat(25);
+function ap(r){[...dots.children].forEach((d,j)=>d.classList.toggle('w',!r||j<3));b1.classList.toggle('sel',!r);b2.classList.toggle('sel',!!r);
+ apcap.innerHTML=r?'<b>Із 25 команд «Аполлон» лише 3 стали переможцями.</b> Багато хто закінчував гру у нижній частині таблиці.':'<b>Очікування:</b> усі 25 команд мали бути серед лідерів.'}
+ap(0);
+
+// картки ролей
+roles.innerHTML=R.map(r=>`<button class="role ${r.g}" data-k="${r.k}"><b>${r.n}</b><small>${r.e}</small></button>`).join('');
+roles.onclick=e=>{const b=e.target.closest('.role');if(!b)return;const r=R.find(x=>x.k===b.dataset.k);
+ roles.querySelectorAll('.role').forEach(x=>x.classList.toggle('sel',x===b));
+ window.bgFocus&&bgFocus(r.g);detail.className='card detail '+r.g;
+ detail.innerHTML=`<h3>${r.n} <small class="mut">· ${G[r.g]} роль</small></h3><p><b>Сильні сторони:</b> ${r.s}</p><p><b>Допустима слабкість:</b> ${r.w}</p>`};
+
+// конструктор команди
+const team=new Set();
+chips.innerHTML=R.map(r=>`<button class="btn ${r.g}" data-k="${r.k}">${r.n}</button>`).join('');
+const M={act:"Дієвих ролей немає: багато розмов і планів, але мало руху до результату.",ppl:"Соціальних ролей немає: команда ризикує потонути в конфліктах і не мати зовнішніх зв'язків.",tht:"Розумових ролей немає: бракує свіжих ідей та критичного аналізу."};
+function upd(){const c={act:0,ppl:0,tht:0};team.forEach(k=>c[R.find(r=>r.k===k).g]++);
+ [...meter.children].forEach(d=>d.classList.toggle('f',c[d.className.replace(' f','')]>0));
+ const miss=Object.keys(c).filter(g=>!c[g]);
+ msg.textContent=!team.size?"Команда порожня. Додайте першу роль.":miss.length?miss.map(g=>M[g]).join(' '):(team.size>=6?"Гарний баланс: усі три групи ролей представлені.":"Усі групи представлені, але команда мала: одна людина може поєднувати кілька ролей.")}
+chips.onclick=e=>{const b=e.target.closest('.btn');if(!b)return;const k=b.dataset.k;team.has(k)?team.delete(k):team.add(k);window.bgFocus&&bgFocus(R.find(r=>r.k===k).g);b.classList.toggle('sel');upd()};upd();
+
+// тест
+const Q=[
+["Коли команда застрягла, я зазвичай…",[["пропоную несподівану ідею","pl"],["наполягаю рухатись далі","sh"],["розподіляю завдання між усіма","co"],["шукаю підказки за межами команди","ri"]]],
+["Моя сила в проєкті:",[["зважую варіанти й бачу ризики","me"],["послідовно виконую план","im"],["помічаю дрібні помилки","cf"],["підтримую атмосферу в команді","tw"]]],
+["Мене найбільше дратує…",[["хаос без плану","im"],["повільний темп","sh"],["рішення без аналізу","me"],["конфлікти в групі","tw"]]],
+["Колеги цінують мене за…",[["глибокі знання вузької теми","sp"],["вміння довести справу до кінця","cf"],["нові ідеї","pl"],["мережу контактів","ri"]]],
+["На нараді я…",[["веду обговорення й слухаю всіх","co"],["даю експертну думку","sp"],["ставлю критичні питання","me"],["швидко організовую дії","im"]]]
+];
+let qi=0,sc={};
+function q(){const el=document.getElementById('quiz');
+ if(qi>=Q.length){const top=Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0],r=R.find(x=>x.k===top);
+  el.innerHTML=`<div class="card ${r.g} bar"><p class="mut">Ваша провідна роль</p><h1 style="color:var(--c)">${r.n}</h1><p><b>Сильні сторони:</b> ${r.s}</p><p><b>Допустима слабкість:</b> ${r.w}</p></div><p><button class="btn" onclick="qi=0;sc={};q()">Пройти ще раз</button></p><p class="mut">Це лише спрощена гра. Офіційний опитувальник Белбіна враховує оцінки колег і значно докладніший.</p>`;return}
+ el.innerHTML=`<p class="mut">Питання ${qi+1} з ${Q.length}</p><p><b>${Q[qi][0]}</b></p>`+Q[qi][1].map((o,n)=>`<button class="btn opt" data-k="${o[1]}">${o[0]}</button>`).join('')}
+quiz.onclick=e=>{const b=e.target.closest('.opt');if(!b)return;sc[b.dataset.k]=(sc[b.dataset.k]||0)+1;qi++;q()};
+q();go(0);
+</script>
+<script>
+// фон: мережа вузлів-учасників команди (кольори = групи ролей)
+(function(){
+const c=document.getElementById('bg'),x=c.getContext('2d'),G=['act','ppl','tht'],still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+let W,H,N=[],mx=-999,my=-999,foc=null,ft=0,col={},fr=0;
+function colors(){const st=getComputedStyle(document.documentElement);G.forEach(g=>col[g]=st.getPropertyValue('--'+g).trim())}
+function size(){const d=devicePixelRatio||1;W=innerWidth;H=innerHeight;c.width=W*d;c.height=H*d;x.setTransform(d,0,0,d,0,0);
+ const n=Math.min(80,Math.round(W*H/20000));N=Array.from({length:n},(_,i)=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,g:G[i%3],r:2+Math.random()*3}))}
+addEventListener('resize',size);
+addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY});
+addEventListener('pointerleave',()=>{mx=my=-999});
+window.bgKick=()=>N.forEach(n=>{n.vx+=(Math.random()-.5)*3;n.vy+=(Math.random()-.5)*3});
+window.bgFocus=g=>{foc=g;ft=90};
+function frame(){
+ if(fr++%40===0)colors();
+ x.clearRect(0,0,W,H);
+ if(ft>0&&--ft===0)foc=null;
+ const L=150;
+ N.forEach(n=>{
+  if(!still){const dx=mx-n.x,dy=my-n.y,d=Math.hypot(dx,dy);if(d<200&&d>1){n.vx+=dx/d*.012;n.vy+=dy/d*.012}
+   n.vx*=.995;n.vy*=.995;const sp=Math.hypot(n.vx,n.vy);if(sp>1.6){n.vx*=1.6/sp;n.vy*=1.6/sp}if(sp<.15){n.vx+=(Math.random()-.5)*.03;n.vy+=(Math.random()-.5)*.03}
+   n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1}
+ });
+ for(let i=0;i<N.length;i++)for(let j=i+1;j<N.length;j++){const a=N[i],b=N[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+  if(d<L){const same=a.g===b.g,hl=foc&&(a.g===foc||b.g===foc);
+   x.globalAlpha=(1-d/L)*(same?.45:.2)*(hl?1.8:1);x.strokeStyle=col[a.g];x.lineWidth=same?1.2:.8;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+ N.forEach(n=>{const hl=foc===n.g,r=n.r*(hl?1.7:1);
+  x.fillStyle=col[n.g];x.globalAlpha=hl?.25:.12;x.beginPath();x.arc(n.x,n.y,r*3.2,0,6.283);x.fill();
+  x.globalAlpha=foc&&!hl?.4:.9;x.beginPath();x.arc(n.x,n.y,r,0,6.283);x.fill()});
+ x.globalAlpha=1;
+ if(!still)requestAnimationFrame(frame)}
+colors();size();frame();
+})();
+</script>
+</body>
+</html>
